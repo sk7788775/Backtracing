@@ -1,0 +1,87 @@
+class Solution {
+    
+    HashSet<Integer> r;
+    HashSet<Integer> ud;
+    HashSet<Integer> ld;
+    
+    public List<List<String>> solveNQueens(int n) {
+        r=new HashSet<>();
+        ud=new HashSet<>();
+        ld=new HashSet<>();
+        
+        List<List<String>> res=new ArrayList<>();
+        List<int[][]> list=new ArrayList<>();
+        int[][] curr=new int[n][n];
+        solve(0,curr,list,n);
+        for(int[][] e:list) {
+            List<String> temp=new ArrayList<>();
+            for(int i=0;i<n;i++) {
+                String str="";
+                for(int j=0;j<n;j++) {
+                    if(e[i][j]==0)
+                        str+=".";
+                    else
+                        str+="Q";
+                }
+                temp.add(str);
+            }
+            res.add(temp);
+        }
+        return res;
+    }
+    
+    public void solve(int col,int[][] curr,List<int[][]> list,int n) {
+        if(col==n) {
+            int[][] temp=new int[n][n];
+            for(int i=0;i<n;i++)
+                for(int j=0;j<n;j++)
+                    temp[i][j]=curr[i][j];
+            list.add(temp);
+            return;
+        }
+        for(int row=0;row<n;row++) {
+            if(isSafe(row,col,curr,n)) {
+                r.add(row);
+                ld.add(col+row);
+                ud.add(n-1+col-row);
+                
+                curr[row][col]=1;
+                solve(col+1,curr,list,n);
+                curr[row][col]=0;
+                
+                r.remove(row);
+                ld.remove(col+row);
+                ud.remove(n-1+col-row);
+            }
+        }
+    }
+    
+    public boolean isSafe(int row,int col,int[][] curr,int n) {
+        // int r=row,c=col;
+        // // check for upper diagonal
+        // while(r>=0 && c>=0) {
+        //     if(curr[r][c]==1)
+        //         return false;
+        //     r--; c--;
+        // }
+        // // check for the same row
+        // r=row; c=col;
+        // while(c>=0) {
+        //     if(curr[r][c]==1)
+        //         return false;
+        //     c--;
+        // }
+        // // check for lower diagonal
+        // r=row; c=col;
+        // while(r<n && c>=0) {
+        //     if(curr[r][c]==1)
+        //         return false;
+        //     r++; c--;
+        // }
+        // return true;
+        if(r.contains(row) || ld.contains(row+col) || ud.contains(n-1+col-row))
+            return false;
+        else
+            return true;
+    }
+}
